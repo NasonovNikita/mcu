@@ -4,8 +4,8 @@
 #include "led/led.h"
 #include "main.h"
 
-#define DEVICE_NAME "nosok_pico"
-#define DEVICE_VRSION "v2.2.8"
+#define DEVICE_NAME "nosok_pico"  # Поменяйте
+#define DEVICE_VRSION "v2.2.8"  # Тем более поменяйте
 
 int main()
 {
