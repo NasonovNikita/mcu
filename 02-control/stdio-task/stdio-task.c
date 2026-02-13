@@ -15,31 +15,49 @@ void stdio_task_init()
 
 char* stdio_task_handle()
 {
-	int symbol = getchar_timeout_us(0);
-	if (symbol == PICO_ERROR_TIMEOUT)
-	{
-		return NULL;
-	}
+    int symbol = getchar_timeout_us(0);
+    if (symbol == PICO_ERROR_TIMEOUT)
+    {
+        return NULL;
+    }
 
-	putchar(symbol);
+    // Обработка backspace
+    if (symbol == '\b' || symbol == 127) // 127 - также часто используется для backspace (DEL)
+    {
+        if (command_buf_idx > 0)
+        {
+            command_buf_idx--;
+            // Опционально: визуальное отображение удаления
+            putchar('\b');  // Возврат курсора
+            putchar(' ');   // Затирание символа пробелом
+            putchar('\b');  // Возврат курсора снова
+        }
+        return NULL;
+    }
 
-	if (symbol == '\r' || symbol == '\n')
-	{
-		command[command_buf_idx] = '\0';
-		command_buf_idx = 0;
-		
-		printf("received string: '%s'\n", command);
+    putchar(symbol);
 
-	    return command;
-	}
+    // Обработка enter (конец строки)
+    if (symbol == '\r' || symbol == '\n')
+    {
+        command[command_buf_idx] = '\0';
+        command_buf_idx = 0;
+        
+        printf("\nreceived string: '%s'\n", command); // Добавлен \n для перевода строки
 
-	if (command_buf_idx >= COMMAND_BUF_LEN - 1)
-	{
-		command_buf_idx = 0;
-		return NULL;
-	}
+        return command;
+    }
 
-	command[command_buf_idx] = symbol;
-	command_buf_idx++;
-	return NULL;
+    // Проверка переполнения буфера
+    if (command_buf_idx >= COMMAND_BUF_LEN - 1)
+    {
+        command_buf_idx = 0;
+        return NULL;
+    }
+
+    // Добавление обычного символа
+    command[command_buf_idx] = symbol;
+    command_buf_idx++;
+    
+    return NULL;
 }
