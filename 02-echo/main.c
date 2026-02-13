@@ -12,11 +12,7 @@ int main()
     stdio_init_all();
     while (true)
     {
-        int c = getchar();
-        if (c != EOF)
-        {
-            char symbol = (char)c;
-            printf("Received char: %c %d\n", symbol, symbol);
-        }
+        char c = getchar();
+        printf("Received char: %c [%d]\n", c, c);
     }
 }
